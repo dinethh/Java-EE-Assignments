@@ -94,99 +94,215 @@
 
 
 <!--bind a event on btn GetAll btn-->
+<!--<script>-->
+
+<!--    getAllCustomers();-->
+
+<!--    $("#btnGetAll").click(function () {-->
+<!--        getAllCustomers();-->
+<!--    });-->
+
+<!--    function getAllCustomers() {-->
+<!--        $("#tblCustomer").empty();-->
+<!--        &lt;!&ndash;send ajax request to the customer servlet using jQuery&ndash;&gt;-->
+<!--        $.ajax({-->
+<!--            url: 'customer',-->
+<!--            dataType: "json",-->
+<!--            success: function (customers) {-->
+<!--                for (let i in customers) {-->
+<!--                    let cus = customers[i];-->
+<!--                    let id = cus.id;-->
+<!--                    let name = cus.name;-->
+<!--                    let address = cus.address;-->
+<!--                    let salary = cus.salary;-->
+<!--                    let row = `<tr><td>${id}</td><td>${name}</td><td>${address}</td><td>${salary}</td></tr>`;-->
+<!--                    $("#tblCustomer").append(row);-->
+<!--                }-->
+<!--            },-->
+<!--            error: function (error) {-->
+<!--                console.log(error);-->
+<!--            }-->
+<!--        });-->
+<!--    }-->
+
+<!--    $("#btnCustomer").click(function () {-->
+<!--        let formData = $("#customerForm").serialize();-->
+<!--        $.ajax({-->
+<!--            url: "customer",-->
+<!--            method: "post",-->
+<!--            data: formData,-->
+<!--            success: function (res) {-->
+<!--                console.log(res);-->
+<!--                alert(res.message);-->
+<!--                getAllCustomers();-->
+<!--            },-->
+<!--            error: function (error) {-->
+<!--                console.log(error.responseJSON);-->
+<!--                alert(error.responseJSON.message);-->
+<!--            }-->
+<!--        });-->
+
+<!--    });-->
+
+<!--    $("#btnCusDelete").click(function () {-->
+<!--        let id = $("#txtCustomerID").val();-->
+<!--        $.ajax({-->
+<!--            url: "customer?id=" + id,-->
+<!--            method: 'delete',-->
+<!--            success: function (resp) {-->
+<!--                getAllCustomers();-->
+<!--            }-->
+<!--        });-->
+<!--    });-->
+
+<!--    $("#btnCusUpdate").click(function () {-->
+
+<!--        let cID = $('#txtCustomerID').val(id);-->
+<!--        let cName = $('#txtCustomerName').val(name);-->
+<!--        let cAddress = $('#txtCustomerAddress').val(address);-->
+<!--        let cSalary = $('#txtCustomerSalary').val(salary);-->
+
+<!--        var customerOb = {-->
+<!--            id: cID,-->
+<!--            name: cName,-->
+<!--            address: cAddress,-->
+<!--            salary: cSalary-->
+<!--        }-->
+<!--        $.ajax({-->
+<!--            url: 'customer',-->
+<!--            method: 'put',-->
+<!--            contentType: "application/json",-->
+<!--            data: JSON.stringify(customerOb),-->
+<!--            success: function (resp) {-->
+<!--                getAllCustomers();-->
+<!--            }-->
+<!--        });-->
+<!--    });-->
+
+<!--    function setTextFieldValues(id, name, address, salary) {-->
+<!--        $('#txtCustomerID').val(id);-->
+<!--        $('#txtCustomerName').val(name);-->
+<!--        $('#txtCustomerAddress').val(address);-->
+<!--        $('#txtCustomerSalary').val(salary);-->
+<!--    }-->
+
+
+<!--    function bindRowClickEvents() {-->
+<!--        $("#tblCustomer").on("click", "tr", function () {-->
+<!--            let id = $(this).find(":eq(0)").text();-->
+<!--            let name = $(this).find(":eq(1)").text();-->
+<!--            let address = $(this).find(":eq(2)").text();-->
+<!--            let salary = $(this).find(":eq(3)").text();-->
+
+<!--            setTextFieldValues(id, name, address, salary);-->
+<!--        });-->
+<!--    }-->
+
+<!--</script>-->
+
 <script>
 
-    getAllCustomers();
+        getAllCustomers();
 
-    $("#btnGetAll").click(function () {
+        $("#btnGetAll").click(function () {
         getAllCustomers();
     });
 
-    function getAllCustomers() {
+        function getAllCustomers() {
         $("#tblCustomer").empty();
-        <!--send ajax request to the customer servlet using jQuery-->
         $.ajax({
-            url: 'customer',
-            dataType: "json",
-            success: function (customers) {
-                for (let i in customers) {
-                    let cus = customers[i];
-                    let id = cus.id;
-                    let name = cus.name;
-                    let address = cus.address;
-                    let salary = cus.salary;
-                    let row = `<tr><td>${id}</td><td>${name}</td><td>${address}</td><td>${salary}</td></tr>`;
-                    $("#tblCustomer").append(row);
-                }
-            },
-            error: function (error) {
-                console.log(error);
-            }
+        url: 'customer',
+        dataType: "json",
+        success: function (customers) {
+        for (let i in customers) {
+        let cus = customers[i];
+        let id = cus.id;
+        let name = cus.name;
+        let address = cus.address;
+        let salary = cus.salary;
+        let row = `<tr><td>${id}</td><td>${name}</td><td>${address}</td><td>${salary}</td></tr>`;
+        $("#tblCustomer").append(row);
+    }
+        bindRowClickEvents(); // Bind the click events after adding rows
+    },
+        error: function (error) {
+        console.log(error);
+    }
+    });
+    }
+
+        $("#btnCustomer").click(function () {
+        let formData = $("#customerForm").serialize();
+        $.ajax({
+        url: "customer",
+        method: "post",
+        data: formData,
+        success: function (res) {
+        console.log(res);
+        alert(res.message);
+        getAllCustomers();
+    },
+        error: function (error) {
+        console.log(error.responseJSON);
+        alert(error.responseJSON.message);
+    }
+    });
+
+    });
+
+        $("#btnCusDelete").click(function () {
+        let id = $("#txtCustomerID").val();
+        $.ajax({
+        url: "customer?id=" + id,
+        method: 'delete',
+        success: function (resp) {
+        getAllCustomers();
+    }
+    });
+    });
+
+        $("#btnCusUpdate").click(function () {
+        let cID = $('#txtCustomerID').val();
+        let cName = $('#txtCustomerName').val();
+        let cAddress = $('#txtCustomerAddress').val();
+        let cSalary = $('#txtCustomerSalary').val();
+
+        var customerOb = {
+        id: cID,
+        name: cName,
+        address: cAddress,
+        salary: cSalary
+    };
+        $.ajax({
+        url: 'customer',
+        method: 'put',
+        contentType: "application/json",
+        data: JSON.stringify(customerOb),
+        success: function (resp) {
+        getAllCustomers();
+    }
+    });
+    });
+
+        function bindRowClickEvents() {
+        $("#tblCustomer").on("click", "tr", function () {
+            let id = $(this).find(":eq(0)").text();
+            let name = $(this).find(":eq(1)").text();
+            let address = $(this).find(":eq(2)").text();
+            let salary = $(this).find(":eq(3)").text();
+
+            setTextFieldValues(id, name, address, salary);
         });
     }
 
-    $("#btnCustomer").click(function () {
-        let formData = $("#customerForm").serialize();
-        $.ajax({
-            url: "customer",
-            method: "post",
-            data: formData,
-            success: function (res) {
-                console.log(res);
-                alert(res.message);
-                getAllCustomers();
-            },
-            error: function (error) {
-                console.log(error.responseJSON);
-                alert(error.responseJSON.message);
-            }
-        });
+        function setTextFieldValues(id, name, address, salary) {
+        $('#txtCustomerID').val(id);
+        $('#txtCustomerName').val(name);
+        $('#txtCustomerAddress').val(address);
+        $('#txtCustomerSalary').val(salary);
+    }
 
-    });
 
-    $("#btnCusDelete").click(function () {
-        let id = $("#txtCustomerID").val();
-        $.ajax({
-            url: "customer?id=" + id,
-            method: 'delete',
-            success: function (resp) {
-                getAllCustomers();
-            }
-        });
-    });
-
-    $("#btnCusUpdate").click(function () {
-
-        let cID = $('#txtCustomerID').val(id);
-        let cName = $('#txtCustomerName').val(name);
-        let cAddress = $('#txtCustomerAddress').val(address);
-        let cSalary = $('#txtCustomerSalary').val(salary);
-
-        var customerOb = {
-            id: cID,
-            name: cName,
-            address: cAddress,
-            salary: cSalary
-        }
-        $.ajax({
-            url: 'customer',
-            method: 'put',
-            contentType: "application/json",
-            data: JSON.stringify(customerOb),
-            success: function (resp) {
-                getAllCustomers();
-            }
-        });
-    });
-
-    // function setTextFieldValues(id,name,address,salary){
-    //     $('#txtCustomerID').val(id);
-    //     $('#txtCustomerName').val(name);
-    //     $('#txtCustomerAddress').val(address);
-    //     $('#txtCustomerSalary').val(salary);
-    // }
 </script>
-
-
 </body>
 </html>
