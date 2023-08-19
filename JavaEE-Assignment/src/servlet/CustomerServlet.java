@@ -20,28 +20,30 @@ public class CustomerServlet extends HttpServlet {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/thogakade", "root", "1234");
             PreparedStatement pstm = connection.prepareStatement("select * from Customer");
             ResultSet rst = pstm.executeQuery();
-
             JsonArrayBuilder allCustomers = Json.createArrayBuilder();
-            while (rst.next()) {
-                String id = rst.getString(1);
-                String name = rst.getString(2);
-                String address = rst.getString(3);
-                double salary=rst.getDouble(4);
 
+            while (rst.next()) {
                 JsonObjectBuilder customerObject = Json.createObjectBuilder();
-                customerObject.add("id", id);
-                customerObject.add("name", name);
-                customerObject.add("address", address);
-                customerObject.add("salary",salary);
+                customerObject.add("id", rst.getString("id"));
+                customerObject.add("name", rst.getString("name"));
+                customerObject.add("address", rst.getString("address"));
+                customerObject.add("salary",rst.getDouble("salary"));
                 allCustomers.add(customerObject.build());
             }
+            resp.addHeader("Content-Type","application/json");
+            JsonObjectBuilder job = Json.createObjectBuilder();
+            job.add("state","OK");
+            job.add("message","Successfully Loaded..!");
+            job.add("data",allCustomers.build());
+            resp.getWriter().print(job.build());
 
-            resp.getWriter().print(allCustomers.build());
-
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        }catch (ClassNotFoundException | SQLException e){
+            JsonObjectBuilder rjo = Json.createObjectBuilder();
+            rjo.add("state","Error");
+            rjo.add("message",e.getLocalizedMessage());
+            rjo.add("data","");
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().print(rjo.build());
         }
 
     }
@@ -89,28 +91,36 @@ public class CustomerServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
-
+        resp.setContentType("application/json");
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/thogakade", "root", "1234");
-
-
             PreparedStatement pstm2 = connection.prepareStatement("delete from Customer where id=?");
-            pstm2.setObject(1, id);
-            if (pstm2.executeUpdate() > 0) {
-                resp.getWriter().println("Customer Deleted..!");
+            pstm2.setObject(1,id);
+            boolean b = pstm2.executeUpdate() > 0;
+            if (b) {
+                JsonObjectBuilder rjo = Json.createObjectBuilder();
+                rjo.add("state","Ok");
+                rjo.add("message","Successfully Deleted..!");
+                rjo.add("data","");
+                resp.getWriter().print(rjo.build());
+            }else {
+                throw new RuntimeException("There is no Customer for that ID..!");
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            JsonObjectBuilder response = Json.createObjectBuilder();
-            response.add("state", "Error");
-            response.add("message", e.getMessage());
-            response.add("data", "");
-            resp.setStatus(400);
-            resp.addHeader("Content-Type", "application/json");
-            resp.getWriter().print(response.build());
-
+        } catch (RuntimeException e) {
+            JsonObjectBuilder rjo = Json.createObjectBuilder();
+            rjo.add("state","Error");
+            rjo.add("message",e.getLocalizedMessage());
+            rjo.add("data","");
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().print(rjo.build());
+        }catch (ClassNotFoundException | SQLException e){
+            JsonObjectBuilder rjo = Json.createObjectBuilder();
+            rjo.add("state","Error");
+            rjo.add("message",e.getLocalizedMessage());
+            rjo.add("data","");
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().print(rjo.build());
         }
 
     }
@@ -136,10 +146,30 @@ public class CustomerServlet extends HttpServlet {
             pstm.setObject(2,address);
             pstm.setObject(3,salary);
             boolean b = pstm.executeUpdate() > 0;
+            if (b){
+                JsonObjectBuilder responseObject = Json.createObjectBuilder();
+                responseObject.add("state","Ok");
+                responseObject.add("message","Successfully Updated..!");
+                responseObject.add("data","");
+                resp.getWriter().print(responseObject.build());
+            }else{
+                throw new RuntimeException("Wrong ID, Please check the ID..!");
+            }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (RuntimeException e) {
+            JsonObjectBuilder rjo = Json.createObjectBuilder();
+            rjo.add("state","Error");
+            rjo.add("message",e.getLocalizedMessage());
+            rjo.add("data","");
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().print(rjo.build());
+        }catch (ClassNotFoundException | SQLException e){
+            JsonObjectBuilder rjo = Json.createObjectBuilder();
+            rjo.add("state","Error");
+            rjo.add("message",e.getLocalizedMessage());
+            rjo.add("data","");
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().print(rjo.build());
         }
-
     }
 }
