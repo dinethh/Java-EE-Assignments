@@ -80,6 +80,7 @@ public class CustomerServlet extends HttpServlet {
             response.add("message", e.getMessage());
             response.add("data", "");
             resp.setStatus(400);
+            resp.addHeader("Content-Type", "application/json");
             resp.getWriter().print(response.build());
 
         }
@@ -88,6 +89,7 @@ public class CustomerServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
+
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/thogakade", "root", "1234");
@@ -101,6 +103,14 @@ public class CustomerServlet extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
+            JsonObjectBuilder response = Json.createObjectBuilder();
+            response.add("state", "Error");
+            response.add("message", e.getMessage());
+            response.add("data", "");
+            resp.setStatus(400);
+            resp.addHeader("Content-Type", "application/json");
+            resp.getWriter().print(response.build());
+
         }
 
     }
@@ -115,7 +125,7 @@ public class CustomerServlet extends HttpServlet {
         String name = customerObject.getString("name");
         String address = customerObject.getString("address");
         String salary = customerObject.getString("salary");
-        System.out.println(id +""+name+""+address+""+salary);
+
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/thogakade", "root", "1234");

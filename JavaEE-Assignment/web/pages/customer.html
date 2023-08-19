@@ -136,8 +136,7 @@
         getAllCustomers();
     },
         error: function (error) {
-        console.log(error.responseJSON);
-        alert(error.responseJSON.message);
+            alert(error.responseJSON.message);
     }
     });
 
@@ -148,10 +147,17 @@
         $.ajax({
         url: "customer?id=" + id,
         method: 'delete',
+            contentType: "application/json",
         success: function (resp) {
         getAllCustomers();
-    }
+        // alert("Customer Deleted successfully!");
+            alert(resp.message);
+    },
+            error: function (error) {
+                alert(error.responseJSON.message);
+            }
     });
+
     });
 
         $("#btnCusUpdate").click(function () {
@@ -173,7 +179,12 @@
         data: JSON.stringify(customerOb),
         success: function (resp) {
         getAllCustomers();
-    }
+            // alert("Customer Updated successfully!");
+            alert(resp.message);
+    },
+            error: function (error) {
+                alert(error.responseJSON.message);
+            }
     });
     });
 
