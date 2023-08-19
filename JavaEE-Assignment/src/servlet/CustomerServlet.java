@@ -1,8 +1,6 @@
 package servlet;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
+import javax.json.*;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -53,7 +51,7 @@ public class CustomerServlet extends HttpServlet {
         String cusID = req.getParameter("cusID");
         String cusName = req.getParameter("cusName");
         String cusAddress = req.getParameter("cusAddress");
-        double cusSalary= Double.parseDouble(req.getParameter("cusSalary"));
+        String cusSalary=req.getParameter("cusSalary");
 
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -89,13 +87,14 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String id = req.getParameter("id");
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/thogakade", "root", "1234");
 
-            String cusID = req.getParameter("cusID");
+
             PreparedStatement pstm2 = connection.prepareStatement("delete from Customer where id=?");
-            pstm2.setObject(1, cusID);
+            pstm2.setObject(1, id);
             if (pstm2.executeUpdate() > 0) {
                 resp.getWriter().println("Customer Deleted..!");
             }
@@ -108,22 +107,26 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String cusID = req.getParameter("cusID");
-        String cusName = req.getParameter("cusName");
-        String cusAddress = req.getParameter("cusAddress");
-        double cusSalary= Double.parseDouble(req.getParameter("cusSalary"));
+
+        JsonReader reader = Json.createReader(req.getReader());
+        JsonObject customerObject = reader.readObject();
+
+        String id = customerObject.getString("id");
+        String name = customerObject.getString("name");
+        String address = customerObject.getString("address");
+        String salary = customerObject.getString("salary");
+        System.out.println(id +""+name+""+address+""+salary);
         try {
             Class.forName("com.mysql.jdbc.Driver");
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/thogakade", "root", "1234");
 
-            PreparedStatement pstm3 = connection.prepareStatement("update Customer set name=?,address=?,salary=? where id=?");
-            pstm3.setObject(4, cusID);
-            pstm3.setObject(1, cusName);
-            pstm3.setObject(2, cusAddress);
-            pstm3.setObject(3,cusSalary);
-            if (pstm3.executeUpdate() > 0) {
-                resp.getWriter().println("Customer Updated..!");
-            }
+            PreparedStatement pstm = connection.prepareStatement("update Customer set name=?,address=?,salary=? where id=?");
+            pstm.setObject(4,id);
+            pstm.setObject(1,name);
+            pstm.setObject(2,address);
+            pstm.setObject(3,salary);
+            boolean b = pstm.executeUpdate() > 0;
+
         } catch (Exception e) {
             e.printStackTrace();
         }

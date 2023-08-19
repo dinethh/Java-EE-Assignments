@@ -62,7 +62,7 @@
                     <button class="btn btn-danger" id="btnCusDelete"
                             type="button">Remove
                     </button>
-                    <button class="btn btn-warning" id="btnUpdate"
+                    <button class="btn btn-warning" id="btnCusUpdate"
                             type="button">Update
                     </button>
                     <button class="btn btn-success" id="btnGetAll" type="button">Get All</button>
@@ -102,40 +102,41 @@
         getAllCustomers();
     });
 
-    function getAllCustomers(){
+    function getAllCustomers() {
         $("#tblCustomer").empty();
         <!--send ajax request to the customer servlet using jQuery-->
         $.ajax({
             url: 'customer',
-            dataType:"json",
+            dataType: "json",
             success: function (customers) {
                 for (let i in customers) {
                     let cus = customers[i];
                     let id = cus.id;
                     let name = cus.name;
                     let address = cus.address;
-                    let row=`<tr><td>${id}</td><td>${name}</td><td>${address}</td></tr>`;
+                    let salary = cus.salary;
+                    let row = `<tr><td>${id}</td><td>${name}</td><td>${address}</td><td>${salary}</td></tr>`;
                     $("#tblCustomer").append(row);
                 }
             },
-            error:function(error){
+            error: function (error) {
                 console.log(error);
             }
         });
     }
 
-    $("#btnCustomer").click(function (){
-        let formData=$("#customerForm").serialize();
+    $("#btnCustomer").click(function () {
+        let formData = $("#customerForm").serialize();
         $.ajax({
-            url:"customer?option=add",
-            method:"post",
-            data:formData,
-            success:function (res){
+            url: "customer",
+            method: "post",
+            data: formData,
+            success: function (res) {
                 console.log(res);
                 alert(res.message);
                 getAllCustomers();
             },
-            error:function (error){
+            error: function (error) {
                 console.log(error.responseJSON);
                 alert(error.responseJSON.message);
             }
@@ -143,33 +144,48 @@
 
     });
 
-    $("#btnCusDelete").click(function(){
-        let formData=$("#customerForm").serialize();
+    $("#btnCusDelete").click(function () {
+        let id = $("#txtCustomerID").val();
         $.ajax({
-            url:'customer?option=delete',
-            method:'post',
-            data:formData,
-            success:function (resp){
+            url: "customer?id=" + id,
+            method: 'delete',
+            success: function (resp) {
                 getAllCustomers();
             }
         });
     });
 
-    $("#btnUpdate").click(function (){
-        let formData=$("#customerForm").serialize();
+    $("#btnCusUpdate").click(function () {
+
+        let cID = $('#txtCustomerID').val(id);
+        let cName = $('#txtCustomerName').val(name);
+        let cAddress = $('#txtCustomerAddress').val(address);
+        let cSalary = $('#txtCustomerSalary').val(salary);
+
+        var customerOb = {
+            id: cID,
+            name: cName,
+            address: cAddress,
+            salary: cSalary
+        }
         $.ajax({
-            url:'customer?option=update',
-            method:'post',
-            data:formData,
-            success:function (resp){
+            url: 'customer',
+            method: 'put',
+            contentType: "application/json",
+            data: JSON.stringify(customerOb),
+            success: function (resp) {
                 getAllCustomers();
             }
         });
     });
+
+    // function setTextFieldValues(id,name,address,salary){
+    //     $('#txtCustomerID').val(id);
+    //     $('#txtCustomerName').val(name);
+    //     $('#txtCustomerAddress').val(address);
+    //     $('#txtCustomerSalary').val(salary);
+    // }
 </script>
-
-
-<!--when the response received catch it and set it to the table-->
 
 
 </body>
