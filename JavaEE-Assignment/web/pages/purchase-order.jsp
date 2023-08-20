@@ -23,7 +23,7 @@
     <ul class="list-group list-group-horizontal text-danger justify-content-end font-weight-bold">
         <li class="list-group-item bg-white" id="lnkHome"><a href="../index.jsp">Home</a></li>
         <li class="list-group-item bg-white" id="lnkCustomer"><a href="customer.html">Customer</a></li>
-        <li class="list-group-item bg-white" id="lnkItem"><a  href="item.jsp">Item</a></li>
+        <li class="list-group-item bg-white" id="lnkItem"><a  href="item.html">Item</a></li>
         <li class="list-group-item bg-danger text-white" id="lnkOrders"><a class="text-white" href="purchase-order.jsp">Orders</a></li>
     </ul>
 </header>
